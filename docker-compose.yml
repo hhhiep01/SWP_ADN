@@ -1,0 +1,38 @@
+version: '3.9'
+
+services:
+  postgres:
+    image: postgres
+    container_name: adn-postgres
+    environment:
+      POSTGRES_USER: adn_user
+      POSTGRES_PASSWORD: matkhau
+      POSTGRES_DB: adn_db
+    ports:
+      - "5433:5432"  
+    volumes:
+      - adn_pgdata:/var/lib/postgresql/data
+    networks:
+      - adn-network
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: adn-pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@adn.com
+      PGADMIN_DEFAULT_PASSWORD: matkhau
+    ports:
+      - "5051:80" 
+    volumes:
+      - adn_pgadmin_data:/var/lib/pgadmin
+    networks:
+      - adn-network
+
+volumes:
+  adn_pgdata:
+    driver: local
+  adn_pgadmin_data:
+    driver: local
+
+networks:
+  adn-network:

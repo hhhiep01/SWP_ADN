@@ -16,7 +16,10 @@ namespace Infrastructure
         private AppDbContext _context;
         public IUserAccountRepository UserAccounts { get; }
         public IEmailVerificationRepository EmailVerifications { get; }
-       
+        public IRoleRepository Roles { get; }
+        public IServiceRepository Services { get; }
+        public ISampleMethodRepository SampleMethods { get; }
+        public IServiceSampleMethodRepository ServiceSampleMethods { get; }
 
 
         public UnitOfWork(AppDbContext context)
@@ -24,8 +27,13 @@ namespace Infrastructure
             _context = context;
             UserAccounts = new UserAccountRepository(context);
             EmailVerifications = new EmailVerificationRepository(context);
-           
-            
+            Roles = new RoleRepository(context);
+            Services = new ServiceRepository(context);
+            SampleMethods = new SampleMethodRepository(context);
+            ServiceSampleMethods = new ServiceSampleMethodRepository(context);
+
+
+
         }
         public async Task SaveChangeAsync()
         {

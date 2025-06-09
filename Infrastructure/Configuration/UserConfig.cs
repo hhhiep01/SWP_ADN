@@ -13,7 +13,11 @@ namespace Infrastructure.Configuration
     {
         public void Configure(EntityTypeBuilder<UserAccount> builder)
         {
-            throw new NotImplementedException();
+            builder.HasKey(u => u.Id);
+            builder.HasOne(u => u.Role)
+                   .WithMany(r => r.UserAccounts)
+                   .HasForeignKey(u => u.RoleId)
+                   .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

@@ -14,6 +14,6 @@ namespace Application.Request.UserAccount
         public string ConfirmPassword { get; set; }
         public string FirstName { get; set; } = string.Empty;
         public string LastName { get; set; } = string.Empty;
-        public Role Role { get; set; }
+        public int RoleId { get; set; }
     }
 }

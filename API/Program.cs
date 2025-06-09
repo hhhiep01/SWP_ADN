@@ -3,14 +3,15 @@ using Application;
 
 using Application.Interface;
 using Application.MyMapper;
-
+using Application.Repository;
 using Application.Services;
 using Application.Validation;
 using Domain;
+using Domain.Entity;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Infrastructure;
-
+using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -96,6 +97,12 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IClaimService, ClaimService>();
 builder.Services.AddScoped<IUserAccountService, UserAccountService>();
+builder.Services.AddScoped<IRoleRepository, RoleRepository>();
+builder.Services.AddScoped<IRoleService, RoleService>();
+builder.Services.AddScoped<IServiceRepository, ServiceRepository>();
+builder.Services.AddScoped<IServiceService, ServiceService>();
+builder.Services.AddScoped<ISampleMethodService, SampleMethodService>();
+
 
 
 

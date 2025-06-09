@@ -18,16 +18,9 @@ namespace Domain.Entity
         public string? PhoneNumber { get; set; }
         public bool? IsEmailVerified { get; set; } = false;
         public string? ImgUrl { get; set; }
+        public int RoleId { get; set; }
         public Role Role { get; set; }
         //
         public List<EmailVerification>? EmailVerifications { get; set; }
-       
-
-
-
-    }
-    public enum Role
-    {
-        User
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Domain.Entity;
+using Infrastructure.Configuration;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -10,9 +11,8 @@ namespace Infrastructure
 {
     public class AppDbContext : DbContext
     {
-        public AppDbContext(DbContextOptions options) : base(options)
+        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
-
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -20,8 +20,18 @@ namespace Infrastructure
         }
         public DbSet<UserAccount> Users { get; set; }
         public DbSet<EmailVerification> EmailVerifications { get; set; }
+        public DbSet<Role> Roles { get; set; }
+        public DbSet<Service> Services { get; set; }
+        public DbSet<SampleMethod> SampleMethods { get; set; }
+        public DbSet<ServiceSampleMethod> ServiceSampleMethods { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.ApplyConfiguration(new UserConfig());
+            modelBuilder.ApplyConfiguration(new RoleConfig());
+            modelBuilder.ApplyConfiguration(new ServiceConfig());
+            modelBuilder.ApplyConfiguration(new SampleMethodConfig());
+            modelBuilder.ApplyConfiguration(new SampleMethodServiceConfig());
+            base.OnModelCreating(modelBuilder);
         }
     }   
 }

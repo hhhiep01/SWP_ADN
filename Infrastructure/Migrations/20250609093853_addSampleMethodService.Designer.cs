@@ -3,6 +3,7 @@ using System;
 using Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250609093853_addSampleMethodService")]
+    partial class addSampleMethodService
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -118,6 +121,45 @@ namespace Infrastructure.Migrations
                     b.ToTable("SampleMethods");
                 });
 
+            modelBuilder.Entity("Domain.Entity.SampleMethodService", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid?>("ModifiedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<int>("SampleMethodId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("ServiceId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SampleMethodId");
+
+                    b.HasIndex("ServiceId", "SampleMethodId")
+                        .IsUnique();
+
+                    b.ToTable("SampleMethodServices");
+                });
+
             modelBuilder.Entity("Domain.Entity.Service", b =>
                 {
                     b.Property<int>("Id")
@@ -158,44 +200,6 @@ namespace Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Services");
-                });
-
-            modelBuilder.Entity("Domain.Entity.ServiceSampleMethod", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<Guid?>("CreatedBy")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime?>("CreatedDate")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<Guid?>("ModifiedBy")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime?>("ModifiedDate")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<int>("SampleMethodId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("ServiceId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("SampleMethodId");
-
-                    b.HasIndex("ServiceId");
-
-                    b.ToTable("ServiceSampleMethods");
                 });
 
             modelBuilder.Entity("Domain.Entity.UserAccount", b =>
@@ -268,16 +272,16 @@ namespace Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Domain.Entity.ServiceSampleMethod", b =>
+            modelBuilder.Entity("Domain.Entity.SampleMethodService", b =>
                 {
                     b.HasOne("Domain.Entity.SampleMethod", "SampleMethod")
-                        .WithMany("ServiceSampleMethods")
+                        .WithMany("SampleMethodServices")
                         .HasForeignKey("SampleMethodId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Domain.Entity.Service", "Service")
-                        .WithMany("ServiceSampleMethods")
+                        .WithMany("SampleMethodServices")
                         .HasForeignKey("ServiceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -305,12 +309,12 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entity.SampleMethod", b =>
                 {
-                    b.Navigation("ServiceSampleMethods");
+                    b.Navigation("SampleMethodServices");
                 });
 
             modelBuilder.Entity("Domain.Entity.Service", b =>
                 {
-                    b.Navigation("ServiceSampleMethods");
+                    b.Navigation("SampleMethodServices");
                 });
 
             modelBuilder.Entity("Domain.Entity.UserAccount", b =>

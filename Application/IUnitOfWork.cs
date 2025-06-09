@@ -1,9 +1,5 @@
 ﻿using Application.Repository;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace Application
 {
@@ -11,8 +7,11 @@ namespace Application
     {
         public IUserAccountRepository UserAccounts { get; }
         public IEmailVerificationRepository EmailVerifications { get; }
-       
-        
+        public IRoleRepository Roles { get; }
+        public IServiceRepository Services { get; }
+        public ISampleMethodRepository SampleMethods { get; }
+        public IServiceSampleMethodRepository ServiceSampleMethods { get; }
+
 
         public Task SaveChangeAsync();
         Task<T> ExecuteScalarAsync<T>(string sql);

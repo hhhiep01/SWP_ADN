@@ -22,11 +22,11 @@ namespace Application.Services
                 throw new ArgumentNullException("UserId can not be found!");
             }
             var userId = Int32.Parse(tokenUserId?.Value.ToString()!);
-            Role userRole = Enum.Parse<Role>(tokenUserRole?.Value.ToString()!);
-            var fullName = tokenUserName?.ToString();
+            var roleName = tokenUserRole?.Value?.ToString();
+            var fullName = tokenUserName?.Value?.ToString();
             var userClaim = new ClaimDTO
             {
-                Role = userRole,
+                Role = roleName,
                 Id = userId,
                 Name = fullName,
             };
@@ -38,8 +38,7 @@ namespace Application.Services
     public class ClaimDTO
     {
         public int Id { get; set; }
-        public Role Role { get; set; }
-
+        public string Role { get; set; }
         public string Name { get; set; }
     }
 

@@ -3,6 +3,7 @@ using System;
 using Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250609083633_addSampleMethod")]
+    partial class addSampleMethod
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -160,44 +163,6 @@ namespace Infrastructure.Migrations
                     b.ToTable("Services");
                 });
 
-            modelBuilder.Entity("Domain.Entity.ServiceSampleMethod", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<Guid?>("CreatedBy")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime?>("CreatedDate")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<Guid?>("ModifiedBy")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime?>("ModifiedDate")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<int>("SampleMethodId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("ServiceId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("SampleMethodId");
-
-                    b.HasIndex("ServiceId");
-
-                    b.ToTable("ServiceSampleMethods");
-                });
-
             modelBuilder.Entity("Domain.Entity.UserAccount", b =>
                 {
                     b.Property<int>("Id")
@@ -268,25 +233,6 @@ namespace Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Domain.Entity.ServiceSampleMethod", b =>
-                {
-                    b.HasOne("Domain.Entity.SampleMethod", "SampleMethod")
-                        .WithMany("ServiceSampleMethods")
-                        .HasForeignKey("SampleMethodId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Entity.Service", "Service")
-                        .WithMany("ServiceSampleMethods")
-                        .HasForeignKey("ServiceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("SampleMethod");
-
-                    b.Navigation("Service");
-                });
-
             modelBuilder.Entity("Domain.Entity.UserAccount", b =>
                 {
                     b.HasOne("Domain.Entity.Role", "Role")
@@ -301,16 +247,6 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Entity.Role", b =>
                 {
                     b.Navigation("UserAccounts");
-                });
-
-            modelBuilder.Entity("Domain.Entity.SampleMethod", b =>
-                {
-                    b.Navigation("ServiceSampleMethods");
-                });
-
-            modelBuilder.Entity("Domain.Entity.Service", b =>
-                {
-                    b.Navigation("ServiceSampleMethods");
                 });
 
             modelBuilder.Entity("Domain.Entity.UserAccount", b =>

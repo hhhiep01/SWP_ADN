@@ -4,6 +4,7 @@ using Application.Response;
 using Azure;
 using Domain;
 using Domain.Entity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
 using System.IdentityModel.Tokens.Jwt;
@@ -49,13 +50,12 @@ namespace Application.Services
                 var pass = CreatePasswordHash(userRequest.Password);
                 UserAccount user = new UserAccount()
                 {
-                    //UserName = userRequest.UserName,
                     PasswordHash = pass.PasswordHash,
                     PasswordSalt = pass.PasswordSalt,
                     Email = userRequest.Email,
                     FirstName = userRequest.FirstName,
                     LastName = userRequest.LastName,
-                    Role = userRequest.Role,
+                    RoleId = userRequest.RoleId,
                     IsEmailVerified = false // Initially, email is not verified
                 };
 
@@ -149,7 +149,7 @@ namespace Application.Services
         public async Task<ApiResponse> LoginAsync(LoginRequest request)
         {
             ApiResponse response = new ApiResponse();
-            var account = await _unitOfWork.UserAccounts.GetAsync(u => u.Email == request.UserEmail);
+            var account = await _unitOfWork.UserAccounts.GetAsync(u => u.Email == request.UserEmail, x => x.Include(x => x.Role));
             if (account == null || !VerifyPasswordHash(request.Password, account.PasswordHash, account.PasswordSalt))
             {
                 response.SetBadRequest(message: "Email or password is wrong");
@@ -185,9 +185,8 @@ namespace Application.Services
             List<Claim> claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim("Role", user.Role.ToString()),
-                new Claim(ClaimTypes.Role, user.Role.ToString()),
+                new Claim("Role", user.Role?.Name ?? string.Empty),
+                new Claim(ClaimTypes.Role, user.Role?.Name ?? string.Empty),
                 new Claim( "Email" , user.Email!),
                 new Claim("UserId", user.Id.ToString()),
                 new Claim("FullName", fullName),

@@ -24,14 +24,18 @@ namespace Infrastructure
         public DbSet<Service> Services { get; set; }
         public DbSet<SampleMethod> SampleMethods { get; set; }
         public DbSet<ServiceSampleMethod> ServiceSampleMethods { get; set; }
+        public DbSet<TestOrder> TestOrders { get; set; }
+        public DbSet<Blog> Blogs { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.ApplyConfiguration(new UserConfig());
+            base.OnModelCreating(modelBuilder);
+            modelBuilder.ApplyConfiguration(new UserAccountConfig());
             modelBuilder.ApplyConfiguration(new RoleConfig());
             modelBuilder.ApplyConfiguration(new ServiceConfig());
             modelBuilder.ApplyConfiguration(new SampleMethodConfig());
             modelBuilder.ApplyConfiguration(new SampleMethodServiceConfig());
-            base.OnModelCreating(modelBuilder);
+            modelBuilder.ApplyConfiguration(new TestOrderConfig());
+            modelBuilder.ApplyConfiguration(new BlogConfig());
         }
     }   
 }

@@ -19,8 +19,11 @@ namespace Domain.Entity
         public bool? IsEmailVerified { get; set; } = false;
         public string? ImgUrl { get; set; }
         public int RoleId { get; set; }
-        public Role Role { get; set; }
         //
         public List<EmailVerification>? EmailVerifications { get; set; }
+        public Role Role { get; set; }
+        public List<TestOrder> TestOrders { get; set; }
+        public List<TestOrder> AppointmentTestOrders { get; set; }
+        public  ICollection<Blog> Blogs { get; set; }
     }
 }

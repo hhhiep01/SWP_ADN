@@ -28,8 +28,7 @@ namespace Application.Services
             ApiResponse response = new ApiResponse();
             try
             {
-                var services = await _unitOfWork.Services.GetAllAsync(null, 
-                    include: q => q.Include(s => s.ServiceSampleMethods)
+                var services = await _unitOfWork.Services.GetAllAsync(null, q => q.Include(s => s.ServiceSampleMethods)
                                  .ThenInclude(sms => sms.SampleMethod));
                 var result = _mapper.Map<IEnumerable<ServiceResponse>>(services);
                 return response.SetOk(result);

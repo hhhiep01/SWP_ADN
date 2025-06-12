@@ -3,6 +3,7 @@ using System;
 using Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250609180411_addTestOrder")]
+    partial class addTestOrder
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,51 +24,6 @@ namespace Infrastructure.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
-
-            modelBuilder.Entity("Domain.Entity.Blog", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<Guid?>("CreatedBy")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime?>("CreatedDate")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<string>("Image")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<Guid?>("ModifiedBy")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime?>("ModifiedDate")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<int>("UserAccountId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserAccountId");
-
-                    b.ToTable("Blogs");
-                });
 
             modelBuilder.Entity("Domain.Entity.EmailVerification", b =>
                 {
@@ -237,11 +195,16 @@ namespace Infrastructure.Migrations
                     b.Property<int>("ServiceId")
                         .HasColumnType("integer");
 
+                    b.Property<int?>("ServiceId1")
+                        .HasColumnType("integer");
+
                     b.HasKey("Id");
 
                     b.HasIndex("SampleMethodId");
 
                     b.HasIndex("ServiceId");
+
+                    b.HasIndex("ServiceId1");
 
                     b.ToTable("ServiceSampleMethods");
                 });
@@ -276,14 +239,6 @@ namespace Infrastructure.Migrations
                     b.Property<int>("DeliveryKitStatus")
                         .HasColumnType("integer");
 
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("FullName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
@@ -295,10 +250,6 @@ namespace Infrastructure.Migrations
 
                     b.Property<DateTime?>("ModifiedDate")
                         .HasColumnType("timestamp without time zone");
-
-                    b.Property<string>("PhoneNumber")
-                        .IsRequired()
-                        .HasColumnType("text");
 
                     b.Property<int>("SampleMethodId")
                         .HasColumnType("integer");
@@ -384,17 +335,6 @@ namespace Infrastructure.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("Domain.Entity.Blog", b =>
-                {
-                    b.HasOne("Domain.Entity.UserAccount", "UserAccount")
-                        .WithMany("Blogs")
-                        .HasForeignKey("UserAccountId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("UserAccount");
-                });
-
             modelBuilder.Entity("Domain.Entity.EmailVerification", b =>
                 {
                     b.HasOne("Domain.Entity.UserAccount", "User")
@@ -419,6 +359,10 @@ namespace Infrastructure.Migrations
                         .HasForeignKey("ServiceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("Domain.Entity.Service", null)
+                        .WithMany("SampleMethodServices")
+                        .HasForeignKey("ServiceId1");
 
                     b.Navigation("SampleMethod");
 
@@ -484,6 +428,8 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entity.Service", b =>
                 {
+                    b.Navigation("SampleMethodServices");
+
                     b.Navigation("ServiceSampleMethods");
 
                     b.Navigation("TestOrders");
@@ -492,8 +438,6 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Entity.UserAccount", b =>
                 {
                     b.Navigation("AppointmentTestOrders");
-
-                    b.Navigation("Blogs");
 
                     b.Navigation("EmailVerifications");
 

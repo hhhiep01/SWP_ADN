@@ -14,6 +14,16 @@ namespace Infrastructure.Configuration
         public void Configure(EntityTypeBuilder<SampleMethod> builder)
         {
             builder.HasKey(s => s.Id);
+
+            builder.HasMany(x => x.ServiceSampleMethods)
+                .WithOne(x => x.SampleMethod)
+                .HasForeignKey(x => x.SampleMethodId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasMany(x => x.TestOrders)
+                .WithOne(x => x.SampleMethod)
+                .HasForeignKey(x => x.SampleMethodId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 } 

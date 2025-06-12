@@ -19,10 +19,12 @@ namespace Application.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        public SampleMethodService(IUnitOfWork unitOfWork, IMapper mapper)
+        private readonly IClaimService _claimService;
+        public SampleMethodService(IUnitOfWork unitOfWork, IMapper mapper, IClaimService claimService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _claimService = claimService;
         }
 
         public async Task<ApiResponse> GetAllAsync()
@@ -60,7 +62,7 @@ namespace Application.Services
         {
             ApiResponse response = new ApiResponse();
             try
-            {
+            {   
                 var existed = await _unitOfWork.SampleMethods.GetAsync(s => s.Name.ToLower() == request.Name.ToLower());
                 if (existed != null)
                 {

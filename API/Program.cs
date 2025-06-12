@@ -102,9 +102,8 @@ builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<IServiceRepository, ServiceRepository>();
 builder.Services.AddScoped<IServiceService, ServiceService>();
 builder.Services.AddScoped<ISampleMethodService, SampleMethodService>();
-
-
-
+builder.Services.AddScoped<ITestOrderService, TestOrderService>();
+builder.Services.AddScoped<IBlogService, BlogService>();
 
 builder.Services.AddFluentValidationAutoValidation().AddValidatorsFromAssemblyContaining<RegisterValidator>();
 

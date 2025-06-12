@@ -10,8 +10,10 @@ namespace Domain.Entity
     {
         public int Id { get; set; }
         public string Name { get; set; }
+        public bool IsActive { get; set; }
 
-        // Navigation property
-        public ICollection<ServiceSampleMethod> ServiceSampleMethods { get; set; }
+        // Navigation properties
+        public List<ServiceSampleMethod> ServiceSampleMethods { get; set; }
+        public List<TestOrder> TestOrders { get; set; }
     }
 } 

@@ -11,6 +11,8 @@ namespace Application
         public IServiceRepository Services { get; }
         public ISampleMethodRepository SampleMethods { get; }
         public IServiceSampleMethodRepository ServiceSampleMethods { get; }
+        public ITestOrderRepository TestOrders { get; }
+        public IBlogRepository Blogs { get; }
 
 
         public Task SaveChangeAsync();

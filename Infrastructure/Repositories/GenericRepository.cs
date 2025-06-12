@@ -1,6 +1,9 @@
 ﻿using Application.Repository;
+using LinqKit;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
+using System.Linq.Expressions;
+using System.Linq;
 
 namespace Infrastructure.Repositories
 {
@@ -25,8 +28,9 @@ namespace Infrastructure.Repositories
                                                int pageIndex = 1,
                                                int pageSize = 5)
         {
-            IQueryable<T> query = _db;
+            //IQueryable<T> query = _db;
 
+            var query = _db.AsQueryable().AsExpandable();
 
             if (filter != null)
             {
@@ -40,9 +44,17 @@ namespace Infrastructure.Repositories
                 query = include(query);
             }
             return await query
-                //.Skip((pageIndex - 1) * pageSize)
-                //.Take(pageSize)
+                .Skip((pageIndex - 1) * pageSize)
+                .Take(pageSize)
                 .ToListAsync();
+        }
+
+        public async Task<int> CountAsync(Expression<Func<T, bool>>? filter = null)
+        {
+            var query = _db.AsQueryable().AsExpandable();
+            if (filter != null)
+                query = query.Where(filter);
+            return await query.CountAsync();
         }
 
         public async Task<List<T>> GetAllAsync(System.Linq.Expressions.Expression<Func<T, bool>>? filter)

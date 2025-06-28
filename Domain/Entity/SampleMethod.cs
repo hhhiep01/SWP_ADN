@@ -15,5 +15,6 @@ namespace Domain.Entity
         // Navigation properties
         public List<ServiceSampleMethod> ServiceSampleMethods { get; set; }
         public List<TestOrder> TestOrders { get; set; }
+        public ICollection<Sample> Samples { get; set; }
     }
 } 

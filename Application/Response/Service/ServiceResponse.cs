@@ -14,5 +14,6 @@ namespace Application.Response.Service
         public decimal Price { get; set; }
         public bool IsActive { get; set; }
         public List<SampleMethodResponse> SampleMethods { get; set; }
+        public string Image { get; set; }
     }
 } 

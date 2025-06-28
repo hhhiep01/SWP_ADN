@@ -24,6 +24,7 @@ namespace Domain.Entity
         public Role Role { get; set; }
         public List<TestOrder> TestOrders { get; set; }
         public List<TestOrder> AppointmentTestOrders { get; set; }
-        public  ICollection<Blog> Blogs { get; set; }
+        public ICollection<Blog> Blogs { get; set; }
+        public ICollection<Sample> Samples { get; set; }
     }
 }

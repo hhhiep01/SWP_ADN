@@ -70,13 +70,5 @@ namespace API.Controller
             var result = await _testOrderService.UpdateDeliveryKitStatusAsync(request);
             return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
-
-        [Authorize(Roles = "Staff,Admin")]
-        [HttpPut("appointment-status")]
-        public async Task<IActionResult> UpdateAppointmentStatus([FromBody] UpdateAppointmentStatusRequest request)
-        {
-            var result = await _testOrderService.UpdateAppointmentStatusAsync(request);
-            return result.IsSuccess ? Ok(result) : BadRequest(result);
-        }
     }
 }

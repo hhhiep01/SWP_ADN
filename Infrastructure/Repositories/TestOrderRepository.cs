@@ -19,8 +19,6 @@ namespace Infrastructure.Repositories
                 pred = pred.And(x => x.Status == req.TestOrderStatus.Value);
             if (req.DeliveryKitStatus.HasValue)
                 pred = pred.And(x => x.DeliveryKitStatus == req.DeliveryKitStatus.Value);
-            if (req.AppointmentStatus.HasValue)
-                pred = pred.And(x => x.AppointmentStatus == req.AppointmentStatus.Value);
             if (req.ServiceId.HasValue)
                 pred = pred.And(x => x.ServiceId == req.ServiceId.Value);
             if (req.SampleMethodId.HasValue)
@@ -47,7 +45,9 @@ namespace Infrastructure.Repositories
                     .ThenInclude(s => s.ServiceSampleMethods)
                         .ThenInclude(ssm => ssm.SampleMethod)
                 .Include(x => x.SampleMethod)
-                .Include(x => x.AppointmentStaff);
+                .Include(x => x.AppointmentStaff)
+             .Include(x => x.Samples)
+                             .ThenInclude(s => s.Result);
 
         
         public async Task<List<TestOrder>> SearchTestOrdersAsync(SearchTestOrderRequest req)

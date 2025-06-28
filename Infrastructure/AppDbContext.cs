@@ -26,6 +26,8 @@ namespace Infrastructure
         public DbSet<ServiceSampleMethod> ServiceSampleMethods { get; set; }
         public DbSet<TestOrder> TestOrders { get; set; }
         public DbSet<Blog> Blogs { get; set; }
+        public DbSet<Sample> Samples { get; set; }
+        public DbSet<Result> Results { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -36,6 +38,8 @@ namespace Infrastructure
             modelBuilder.ApplyConfiguration(new SampleMethodServiceConfig());
             modelBuilder.ApplyConfiguration(new TestOrderConfig());
             modelBuilder.ApplyConfiguration(new BlogConfig());
+            modelBuilder.ApplyConfiguration(new SampleConfig());
+            modelBuilder.ApplyConfiguration(new ResultConfig());
         }
     }   
 }

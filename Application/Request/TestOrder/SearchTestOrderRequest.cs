@@ -11,7 +11,6 @@ namespace Application.Request.TestOrder
     {
         public TestOrderStatus? TestOrderStatus { get; set; }
         public DeliveryKitStatus? DeliveryKitStatus { get; set; }
-        public AppointmentStatus? AppointmentStatus { get; set; }
         public int? ServiceId { get; set; }
         public int? SampleMethodId { get; set; }
         public int? AppointmentStaffId { get; set; }

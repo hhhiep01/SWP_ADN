@@ -15,7 +15,6 @@ namespace Domain.Entity
         public DateTime? KitSendDate { get; set; }
         public int SampleMethodId { get; set; }
         public DateTime? AppointmentDate { get; set; }
-        public AppointmentStatus AppointmentStatus { get; set; }
         public string AppointmentLocation { get; set; }
         public int? AppointmentStaffId { get; set; }
 
@@ -24,6 +23,7 @@ namespace Domain.Entity
         public Service Service { get; set; }
         public SampleMethod SampleMethod { get; set; }
         public UserAccount AppointmentStaff { get; set; }
+        public ICollection<Sample> Samples { get; set; }
     }
 
     public enum TestOrderStatus
@@ -40,14 +40,5 @@ namespace Domain.Entity
         Sent = 1,
         Received = 2,
         Returned = 3
-    }
-
-    public enum AppointmentStatus
-    {
-        Pending = 0,
-        Confirmed = 1,
-        Completed = 2,
-        Cancelled = 3,
-        NoShow = 4
     }
 } 

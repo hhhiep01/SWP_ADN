@@ -22,6 +22,8 @@ namespace Infrastructure
         public IServiceSampleMethodRepository ServiceSampleMethods { get; }
         public ITestOrderRepository TestOrders { get; }
         public IBlogRepository Blogs { get; }
+        public ISampleRepository Samples { get; }
+        public IResultRepository Results { get; }
 
         public UnitOfWork(AppDbContext context)
         {
@@ -34,6 +36,8 @@ namespace Infrastructure
             ServiceSampleMethods = new ServiceSampleMethodRepository(context);
             TestOrders = new TestOrderRepository(context);
             Blogs = new BlogRepository(context);
+            Samples = new SampleRepository(context);
+            Results = new ResultRepository(context);
         }
         public async Task SaveChangeAsync()
         {

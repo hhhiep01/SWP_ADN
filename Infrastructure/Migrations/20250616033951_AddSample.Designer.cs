@@ -3,6 +3,7 @@ using System;
 using Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250616033951_AddSample")]
+    partial class AddSample
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -93,51 +96,6 @@ namespace Infrastructure.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("EmailVerifications");
-                });
-
-            modelBuilder.Entity("Domain.Entity.Result", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Conclusion")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<Guid?>("CreatedBy")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime?>("CreatedDate")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<string>("FilePath")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<Guid?>("ModifiedBy")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime?>("ModifiedDate")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<DateTime?>("ResultDate")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<int>("SampleId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("SampleId")
-                        .IsUnique();
-
-                    b.ToTable("Results");
                 });
 
             modelBuilder.Entity("Domain.Entity.Role", b =>
@@ -284,10 +242,6 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("Image")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<bool>("IsActive")
                         .HasColumnType("boolean");
 
@@ -366,6 +320,9 @@ namespace Infrastructure.Migrations
                         .HasColumnType("text");
 
                     b.Property<int?>("AppointmentStaffId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("AppointmentStatus")
                         .HasColumnType("integer");
 
                     b.Property<Guid?>("CreatedBy")
@@ -507,17 +464,6 @@ namespace Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Domain.Entity.Result", b =>
-                {
-                    b.HasOne("Domain.Entity.Sample", "Sample")
-                        .WithOne("Result")
-                        .HasForeignKey("Domain.Entity.Result", "SampleId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Sample");
-                });
-
             modelBuilder.Entity("Domain.Entity.Sample", b =>
                 {
                     b.HasOne("Domain.Entity.UserAccount", "Collector")
@@ -611,12 +557,6 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Entity.Role", b =>
                 {
                     b.Navigation("UserAccounts");
-                });
-
-            modelBuilder.Entity("Domain.Entity.Sample", b =>
-                {
-                    b.Navigation("Result")
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("Domain.Entity.SampleMethod", b =>

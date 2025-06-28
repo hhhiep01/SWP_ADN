@@ -74,5 +74,20 @@ namespace Application.Services
             }
         }
 
+        public async Task<ApiResponse> GetAllStaffAccountAsync()
+        {
+            ApiResponse apiResponse = new ApiResponse();
+            try
+            {
+                var user = await _unitOfWork.UserAccounts.GetAllAsync(x=> x.Role.Id == 3);
+                var userResponse = _mapper.Map<List<AccountResponse>>(user);
+                return apiResponse.SetOk(userResponse);
+            }
+            catch (Exception ex)
+            {
+                return apiResponse.SetBadRequest(ex.Message);
+            }
+        }
+
     }
 }

@@ -39,10 +39,4 @@ namespace Application.Request.TestOrder
         public int Id { get; set; }
         public DeliveryKitStatus DeliveryKitStatus { get; set; }
     }
-
-    public class UpdateAppointmentStatusRequest
-    {
-        public int Id { get; set; }
-        public AppointmentStatus AppointmentStatus { get; set; }
-    }
 }

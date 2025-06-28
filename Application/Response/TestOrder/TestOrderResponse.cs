@@ -1,3 +1,4 @@
+using Application.Response.Sample;
 using Application.Response.SampleMethod;
 using Application.Response.Service;
 using Domain.Entity;
@@ -21,9 +22,9 @@ namespace Application.Response.TestOrder
         public DeliveryKitStatus DeliveryKitStatus { get; set; }
         public DateTime? KitSendDate { get; set; }
         public DateTime? AppointmentDate { get; set; }
-        public AppointmentStatus AppointmentStatus { get; set; }
         public string AppointmentLocation { get; set; }
         public int? AppointmentStaffId { get; set; }
         public string AppointmentStaffName { get; set; }
+        public List<SampleResponse> Samples { get; set; }
     }
 }

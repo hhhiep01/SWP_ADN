@@ -106,10 +106,7 @@ namespace Application.Services
                 _mapper.Map(request, existingBlog);
                 existingBlog.ModifiedDate = DateTime.UtcNow;
 
-                await _unitOfWork.Blogs.AddAsync(existingBlog);
                 await _unitOfWork.SaveChangeAsync();
-
-                var result = _mapper.Map<BlogResponse>(existingBlog);
                 return response.SetOk("Update Success");
             }
             catch (Exception ex)

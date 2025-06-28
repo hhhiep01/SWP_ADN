@@ -59,7 +59,9 @@ namespace Application.Services
                          .ThenInclude(s => s.ServiceSampleMethods)
                                 .ThenInclude(ssm => ssm.SampleMethod)
                          .Include(x => x.User)
-                         .Include(x => x.AppointmentStaff));
+                         .Include(x => x.AppointmentStaff)
+                         .Include(x => x.Samples)
+                             .ThenInclude(s => s.Result));
 
                 if (order == null)
                 {
@@ -103,7 +105,7 @@ namespace Application.Services
                 order.CreatedDate = DateTime.UtcNow;
                 order.Status = TestOrderStatus.Pending;
                 order.DeliveryKitStatus = DeliveryKitStatus.NotSent;
-                order.AppointmentStatus = AppointmentStatus.Pending;
+
 
                 await _unitOfWork.TestOrders.AddAsync(order);
                 await _unitOfWork.SaveChangeAsync();
@@ -128,10 +130,12 @@ namespace Application.Services
                     return response.SetNotFound($"Test order with ID {request.Id} not found");
                 }
 
+              
+
                 _mapper.Map(request, existingOrder);
                 existingOrder.ModifiedDate = DateTime.UtcNow;
 
-                await _unitOfWork.TestOrders.AddAsync(existingOrder);
+                
                 await _unitOfWork.SaveChangeAsync();
 
                 var result = _mapper.Map<TestOrderResponse>(existingOrder);
@@ -176,14 +180,14 @@ namespace Application.Services
                     return response.SetNotFound($"Test order with ID {request.Id} not found");
                 }
 
-                //order.Status = request.Status;
+                order.Status = request.TestOrderStatus;
                 order.ModifiedDate = DateTime.UtcNow;
 
-                await _unitOfWork.TestOrders.AddAsync(order);
+              
                 await _unitOfWork.SaveChangeAsync();
 
-                var result = _mapper.Map<TestOrderResponse>(order);
-                return response.SetOk(result);
+                //var result = _mapper.Map<TestOrderResponse>(order);
+                return response.SetOk("Update Success");
             }
             catch (Exception ex)
             {
@@ -210,33 +214,7 @@ namespace Application.Services
                     order.KitSendDate = DateTime.UtcNow;
                 }
 
-                await _unitOfWork.TestOrders.AddAsync(order);
-                await _unitOfWork.SaveChangeAsync();
-
-                var result = _mapper.Map<TestOrderResponse>(order);
-                return response.SetOk("Update Success");
-            }
-            catch (Exception ex)
-            {
-                return response.SetBadRequest($"Error: {ex.Message}. Details: {ex.InnerException?.Message}");
-            }
-        }
-
-        public async Task<ApiResponse> UpdateAppointmentStatusAsync(UpdateAppointmentStatusRequest request)
-        {
-            ApiResponse response = new ApiResponse();
-            try
-            {
-                var order = await _unitOfWork.TestOrders.GetAsync(x => x.Id == request.Id);
-                if (order == null)
-                {
-                    return response.SetNotFound($"Test order with ID {request.Id} not found");
-                }
-
-                order.AppointmentStatus = request.AppointmentStatus;
-                order.ModifiedDate = DateTime.UtcNow;
-
-                await _unitOfWork.TestOrders.AddAsync(order);
+               
                 await _unitOfWork.SaveChangeAsync();
 
                 var result = _mapper.Map<TestOrderResponse>(order);

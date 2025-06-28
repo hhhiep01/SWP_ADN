@@ -13,6 +13,10 @@ using Application.Request.TestOrder;
 using Application.Response.TestOrder;
 using Application.Request.Blog;
 using Application.Response.Blog;
+using Application.Request.Sample;
+using Application.Response.Sample;
+using Application.Request;
+using Application.Response;
 
 
 namespace Application.MyMapper
@@ -39,9 +43,12 @@ namespace Application.MyMapper
                     dest => dest.SampleMethods,
                     opt => opt.MapFrom(src => src.ServiceSampleMethods
                         .Select(sms => sms.SampleMethod)
-                        .ToList()));
-            CreateMap<ServiceRequest, Service>();
-            CreateMap<ServiceUpdateRequest, Service>();
+                        .ToList()))
+                .ForMember(dest => dest.Image, opt => opt.MapFrom(src => src.Image));
+            CreateMap<ServiceRequest, Service>()
+                .ForMember(dest => dest.Image, opt => opt.MapFrom(src => src.Image));
+            CreateMap<ServiceUpdateRequest, Service>()
+                .ForMember(dest => dest.Image, opt => opt.MapFrom(src => src.Image));
 
             // SampleMethod mappings
             CreateMap<SampleMethod, SampleMethodResponse>();
@@ -59,7 +66,11 @@ namespace Application.MyMapper
                                          opt => opt.MapFrom(src => src.Service))
                .ForMember(dest => dest.SampleMethods,
                                         opt => opt.MapFrom(src => src.SampleMethod))
-                .ForMember(dest => dest.AppointmentStaffName, opt => opt.MapFrom(src => src.AppointmentStaff != null ? $"{src.AppointmentStaff.FirstName} {src.AppointmentStaff.LastName}" : null));
+                .ForMember(dest => dest.AppointmentStaffName, opt => opt.MapFrom(src => src.AppointmentStaff != null ? $"{src.AppointmentStaff.FirstName} {src.AppointmentStaff.LastName}" : null))
+                .ForMember(dest => dest.Samples, opt => opt.MapFrom(src => src.Samples));
+
+            CreateMap<TestOrder, TestOrderShortResponse>()
+                .ForMember(dest => dest.ServiceName, opt => opt.MapFrom(src => src.Service != null ? src.Service.Name : null));
 
             CreateMap<CreateTestOrderRequest, TestOrder>();
             CreateMap<UpdateTestOrderRequest, TestOrder>();
@@ -67,8 +78,6 @@ namespace Application.MyMapper
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.TestOrderStatus));
             CreateMap<UpdateDeliveryKitStatusRequest, TestOrder>()
                 .ForMember(dest => dest.DeliveryKitStatus, opt => opt.MapFrom(src => src.DeliveryKitStatus));
-            CreateMap<UpdateAppointmentStatusRequest, TestOrder>()
-                .ForMember(dest => dest.AppointmentStatus, opt => opt.MapFrom(src => src.AppointmentStatus));
 
 
             CreateMap<Blog, BlogResponse>()
@@ -77,6 +86,24 @@ namespace Application.MyMapper
             CreateMap<CreateBlogRequest, Blog>();
             CreateMap<UpdateBlogRequest, Blog>();
 
+            // Sample mappings
+            CreateMap<Sample, SampleResponse>()
+                .ForMember(dest => dest.CollectorName,
+                    opt => opt.MapFrom(src => src.Collector != null ?
+                        $"{src.Collector.FirstName} {src.Collector.LastName}" : null))
+                .ForMember(dest => dest.TestOrder,
+                    opt => opt.MapFrom(src => src.TestOrder))
+                .ForMember(dest => dest.Result,
+                    opt => opt.MapFrom(src => src.Result));
+               /* .ForMember(dest => dest.SampleMethod,
+                    opt => opt.MapFrom(src => src.TestOrder.SampleMethod));*/
+            CreateMap<SampleRequest, Sample>();
+
+            CreateMap<Result, ResultResponse>()
+                .ForMember(dest => dest.ServiceName, opt => opt.MapFrom(src => src.Sample != null && src.Sample.TestOrder != null && src.Sample.TestOrder.Service != null ? src.Sample.TestOrder.Service.Name : null))
+                .ForMember(dest => dest.SampleMethodName, opt => opt.MapFrom(src => src.Sample != null && src.Sample.TestOrder != null && src.Sample.TestOrder.SampleMethod != null ? src.Sample.TestOrder.SampleMethod.Name : null));
+
+            CreateMap<ResultRequest, Result>();
         }
     }
 }

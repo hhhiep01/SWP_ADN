@@ -1,5 +1,6 @@
 using Application.Interface;
 using Application.Request.Sample;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
@@ -30,6 +31,7 @@ namespace API.Controller
         }
 
         [HttpPost]
+        [Authorize(Roles = "Staff,Admin")]
         public async Task<IActionResult> Create([FromBody] SampleRequest request)
         {
             var result = await _sampleService.CreateAsync(request);

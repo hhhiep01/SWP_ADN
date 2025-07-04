@@ -38,7 +38,5 @@ namespace Domain.Entity
     {
         NotSent = 0,
         Sent = 1,
-        Received = 2,
-        Returned = 3
     }
 } 

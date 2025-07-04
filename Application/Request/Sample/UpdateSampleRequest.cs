@@ -13,6 +13,6 @@ namespace Application.Request.Sample
         public DateTime? ReceivedDate { get; set; }
         public SampleStatus SampleStatus { get; set; }
         public string Notes { get; set; }
-        public int? CollectedBy { get; set; }
+        //public int? CollectedBy { get; set; }
     }
 } 

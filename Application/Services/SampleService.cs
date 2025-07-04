@@ -122,12 +122,6 @@ namespace Application.Services
                 if (testOrder == null)
                     return response.SetBadRequest("TestOrder not found");
 
-                // Set CollectedBy based on SampleMethod from TestOrder
-                if (testOrder.SampleMethod.Name.ToLower().Contains("self") || testOrder.SampleMethod.Name.ToLower().Contains("tự"))
-                {
-                    // For self-collection methods, set collector to the customer
-                    request.CollectedBy = testOrder.UserId;
-                }
 
                 _mapper.Map(request, existing);
                 existing.SampleMethodId = testOrder.SampleMethodId; // Set SampleMethodId from TestOrder

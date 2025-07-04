@@ -95,9 +95,10 @@ namespace Application.MyMapper
                     opt => opt.MapFrom(src => src.TestOrder))
                 .ForMember(dest => dest.Result,
                     opt => opt.MapFrom(src => src.Result));
-               /* .ForMember(dest => dest.SampleMethod,
-                    opt => opt.MapFrom(src => src.TestOrder.SampleMethod));*/
+            /* .ForMember(dest => dest.SampleMethod,
+                 opt => opt.MapFrom(src => src.TestOrder.SampleMethod));*/
             CreateMap<SampleRequest, Sample>();
+            CreateMap<UpdateSampleRequest, Sample>();
 
             CreateMap<Result, ResultResponse>()
                 .ForMember(dest => dest.ServiceName, opt => opt.MapFrom(src => src.Sample != null && src.Sample.TestOrder != null && src.Sample.TestOrder.Service != null ? src.Sample.TestOrder.Service.Name : null))

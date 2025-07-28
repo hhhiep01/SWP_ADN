@@ -13,6 +13,8 @@ namespace Application.Request.Sample
         public DateTime? ReceivedDate { get; set; }
         public SampleStatus SampleStatus { get; set; }
         public string Notes { get; set; }
+        public string? ShippingProvider { get; set; }
+        public string? TrackingNumber { get; set; }
         //public int? CollectedBy { get; set; }
     }
 } 

@@ -13,12 +13,17 @@ namespace Domain.Entity
         public SampleStatus SampleStatus { get; set; }
         public string Notes { get; set; }
         public int? CollectedBy { get; set; }  
+        public string? ShippingProvider { get; set; }
+        public string? TrackingNumber { get; set; }
+        public string? ParticipantName { get; set; }
+        public string? Relationship { get; set; }
+        public string? SampleCode { get; set; }
 
         // Navigation properties
         public  TestOrder TestOrder { get; set; }
         public  SampleMethod SampleMethod { get; set; }
         public  UserAccount Collector { get; set; } 
-        public Result Result { get; set; }
+        public ICollection<LocusResult> LocusResults { get; set; }
     }
     public enum SampleStatus
         {

@@ -26,5 +26,6 @@ namespace Domain.Entity
         public List<TestOrder> AppointmentTestOrders { get; set; }
         public ICollection<Blog> Blogs { get; set; }
         public ICollection<Sample> Samples { get; set; }
+        public ICollection<Comment> Comments { get; set; }
     }
 }

@@ -24,6 +24,9 @@ namespace Infrastructure
         public IBlogRepository Blogs { get; }
         public ISampleRepository Samples { get; }
         public IResultRepository Results { get; }
+        public ICommentRepository Comments { get; }
+
+        public ILocusResultRepository Locus { get; }
 
         public UnitOfWork(AppDbContext context)
         {
@@ -38,6 +41,8 @@ namespace Infrastructure
             Blogs = new BlogRepository(context);
             Samples = new SampleRepository(context);
             Results = new ResultRepository(context);
+            Comments = new CommentRepository(context);
+            Locus = new LocusResultRepository(context);
         }
         public async Task SaveChangeAsync()
         {

@@ -47,13 +47,41 @@ namespace Infrastructure.Repositories
                 .Include(x => x.SampleMethod)
                 .Include(x => x.AppointmentStaff)
              .Include(x => x.Samples)
-                             .ThenInclude(s => s.Result);
+            .Include(s => s.Result);
 
         
         public async Task<List<TestOrder>> SearchTestOrdersAsync(SearchTestOrderRequest req)
         {
             var pred = BuildPredicate(req);
-            return await base.GetAllAsync(pred, IncludeAll, req.PageIndex, req.PageSize);
+            var query = _db.AsQueryable().AsExpandable();
+            if (pred != null)
+            {
+                query = query.Where(pred);
+            }
+            if (IncludeAll != null)
+            {
+                query = IncludeAll(query);
+            }
+            // Check if all filters are null/empty
+            bool noFilter =
+                !req.TestOrderStatus.HasValue &&
+                !req.DeliveryKitStatus.HasValue &&
+                !req.ServiceId.HasValue &&
+                !req.SampleMethodId.HasValue &&
+                !req.AppointmentStaffId.HasValue &&
+                string.IsNullOrEmpty(req.PhoneNumber) &&
+                string.IsNullOrEmpty(req.Email) &&
+                string.IsNullOrEmpty(req.FullName) &&
+                !req.FromDate.HasValue &&
+                !req.ToDate.HasValue;
+            if (noFilter)
+            {
+                query = query.OrderByDescending(x => x.CreatedDate);
+            }
+            return await query
+                .Skip((req.PageIndex - 1) * req.PageSize)
+                .Take(req.PageSize)
+                .ToListAsync();
         }
 
        

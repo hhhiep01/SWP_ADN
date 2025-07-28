@@ -13,5 +13,6 @@ namespace Application.Interface
         Task<ApiResponse> UpdateAsync(int id, ResultRequest request);
         Task<ApiResponse> DeleteAsync(int id);
         Task<ApiResponse> GetByCurrentUserAsync();
+        Task<ApiResponse> GetFullResultByTestOrderIdAsync(int testOrderId);
     }
 } 

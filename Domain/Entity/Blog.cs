@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace Domain.Entity
 {
@@ -12,5 +13,6 @@ namespace Domain.Entity
 
         // Navigation property
         public UserAccount UserAccount { get; set; }
+        public ICollection<Comment> Comments { get; set; }
     }
 } 

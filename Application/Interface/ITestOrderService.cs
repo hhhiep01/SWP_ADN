@@ -14,5 +14,6 @@ namespace Application.Interface
         Task<ApiResponse> DeleteAsync(int id);
         Task<ApiResponse> UpdateStatusAsync(UpdateTestOrderStatusRequest request);
         Task<ApiResponse> UpdateDeliveryKitStatusAsync(UpdateDeliveryKitStatusRequest request);
+        Task<ApiResponse> GetByCurrentCustomerAsync();
     }
 } 

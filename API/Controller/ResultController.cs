@@ -3,6 +3,9 @@ using Application.Request;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using Application.Services;
+using Microsoft.AspNetCore.Http;
+using System.IO;
 
 namespace API.Controller
 {
@@ -57,5 +60,13 @@ namespace API.Controller
             var result = await _resultService.GetByCurrentUserAsync();
             return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
+
+        [HttpGet("testorder/{testOrderId}/full-result")]
+        public async Task<IActionResult> GetFullResultByTestOrderId(int testOrderId)
+        {
+            var result = await _resultService.GetFullResultByTestOrderIdAsync(testOrderId);
+            return result.IsSuccess ? Ok(result) : NotFound(result);
+        }
+
     }
 } 

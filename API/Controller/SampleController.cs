@@ -31,8 +31,8 @@ namespace API.Controller
         }
 
         [HttpPost]
-        [Authorize(Roles = "Staff,Admin")]
-        public async Task<IActionResult> Create([FromBody] SampleRequest request)
+        [Authorize(Roles = "Staff,Admin,Customer")]
+        public async Task<IActionResult> Create(CreateSamplesRequest request)
         {
             var result = await _sampleService.CreateAsync(request);
             return result.IsSuccess ? Ok(result) : BadRequest(result);

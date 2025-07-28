@@ -15,6 +15,8 @@ namespace Application
         public IBlogRepository Blogs { get; }
         public ISampleRepository Samples { get; }
         public IResultRepository Results { get; }
+        public ICommentRepository Comments { get; }
+        public ILocusResultRepository Locus { get; }
 
 
         public Task SaveChangeAsync();

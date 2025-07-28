@@ -6,6 +6,8 @@ using Domain.Entity;
 using Application.Interface;
 using DocumentFormat.OpenXml.Office2010.Excel;
 using Microsoft.EntityFrameworkCore;
+using Application.Response.Sample;
+using Application.Response.TestOrder;
 
 namespace Application.Services
 {
@@ -28,13 +30,12 @@ namespace Application.Services
             {
                 var results = await _unitOfWork.Results.GetAllAsync(
                     null,
-                    q => q.Include(r => r.Sample)
-                          .ThenInclude(s => s.TestOrder)
-                              .ThenInclude(t => t.Service)
-                          .Include(r => r.Sample)
-                              .ThenInclude(s => s.TestOrder)
-                              .ThenInclude(t => t.SampleMethod)
+                    q => q.Include(r => r.TestOrder)
+                          .ThenInclude(t => t.Service)
+                          .Include(r => r.TestOrder)
+                          .ThenInclude(t => t.SampleMethod)
                 );
+                results = results.OrderByDescending(r => r.CreatedDate).ToList();
                 var mapped = _mapper.Map<IEnumerable<ResultResponse>>(results);
                 return response.SetOk(mapped);
             }
@@ -49,7 +50,7 @@ namespace Application.Services
             ApiResponse response = new ApiResponse();
             try
             {
-                var result = await _unitOfWork.Results.GetAsync(r => r.Id == id);
+                var result = await _unitOfWork.Results.GetAsync(r => r.Id == id, q => q.Include(r => r.TestOrder));
                 if (result == null) return response.SetNotFound("Result not found");
                 var mapped = _mapper.Map<ResultResponse>(result);
                 return response.SetOk(mapped);
@@ -65,12 +66,11 @@ namespace Application.Services
             ApiResponse response = new ApiResponse();
             try
             {
-                var result = await _unitOfWork.Samples.GetAsync(r => r.Id == request.SampleId);
-                if (result == null) return response.SetNotFound("Sample not found");
+                var testOrder = await _unitOfWork.TestOrders.GetAsync(t => t.Id == request.TestOrderId);
+                if (testOrder == null) return response.SetNotFound("TestOrder not found");
                 var entity = _mapper.Map<Result>(request);
                 await _unitOfWork.Results.AddAsync(entity);
                 await _unitOfWork.SaveChangeAsync();
-               
                 return response.SetOk("Create Success");
             }
             catch (Exception ex)
@@ -86,7 +86,6 @@ namespace Application.Services
             {
                 var existing = await _unitOfWork.Results.GetAsync(r => r.Id == id);
                 if (existing == null) return response.SetNotFound("Result not found");
-                // Check duplicate nếu cần
                 _mapper.Map(request, existing);
                 await _unitOfWork.SaveChangeAsync();
                 var mapped = _mapper.Map<ResultResponse>(existing);
@@ -122,22 +121,53 @@ namespace Application.Services
             {
                 var claim = _claimService.GetUserClaim();
                 var results = await _unitOfWork.Results.GetAllAsync(
-                    null,
-                    q => q.Include(r => r.Sample)
-                          .ThenInclude(s => s.TestOrder)
-                              .ThenInclude(t => t.Service)
-                          .Include(r => r.Sample)
-                              .ThenInclude(s => s.TestOrder)
-                              .ThenInclude(t => t.SampleMethod)
+                    r => r.TestOrder.UserId == claim.Id,
+                    q => q.Include(r => r.TestOrder)
+                          .ThenInclude(t => t.Service)
+                          .Include(r => r.TestOrder)
+                          .ThenInclude(t => t.SampleMethod)
                 );
-                var filtered = results.Where(r => r.Sample != null && r.Sample.TestOrder != null && r.Sample.TestOrder.UserId == claim.Id);
-                var mapped = _mapper.Map<IEnumerable<ResultResponse>>(filtered);
+                var mapped = _mapper.Map<IEnumerable<ResultResponse>>(results);
                 return response.SetOk(mapped);
             }
             catch (Exception ex)
             {
                 return response.SetBadRequest($"Error: {ex.Message}. Details: {ex.InnerException?.Message}");
             }
+        }
+
+        public async Task<ApiResponse> GetFullResultByTestOrderIdAsync(int testOrderId)
+        {
+            var testOrder = await _unitOfWork.TestOrders.GetAsync(
+                t => t.Id == testOrderId,
+                q => q.Include(t => t.Samples)
+            );
+            if (testOrder == null)
+                return new ApiResponse().SetNotFound("TestOrder not found");
+
+            // Result gắn với TestOrder, không còn gắn với Sample
+            var result = await _unitOfWork.Results.GetAsync(r => r.TestOrderId == testOrderId);
+
+            var sampleResults = new List<SampleWithResultResponse>();
+            foreach (var sample in testOrder.Samples)
+            {
+                var locusResults = await _unitOfWork.Locus.GetAllAsync(l => l.SampleId == sample.Id);
+                var sampleWithResult = _mapper.Map<SampleWithResultResponse>(sample);
+                sampleWithResult.Result = _mapper.Map<ResultResponse>(result); // result chung cho TestOrder
+                sampleWithResult.LocusResults = _mapper.Map<List<LocusResultResponse>>(locusResults);
+                sampleResults.Add(sampleWithResult);
+            }
+
+            var orderInfo = _mapper.Map<TestOrderWithResultResponse>(testOrder);
+            orderInfo.Samples = sampleResults;
+
+            var response = new TestOrderFullResultResponse
+            {
+                TestOrderId = testOrderId,
+                OrderInfo = orderInfo
+            };
+
+            return new ApiResponse().SetOk(response);
         }
     }
 } 

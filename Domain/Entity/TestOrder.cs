@@ -17,6 +17,7 @@ namespace Domain.Entity
         public DateTime? AppointmentDate { get; set; }
         public string AppointmentLocation { get; set; }
         public int? AppointmentStaffId { get; set; }
+        public Result Result { get; set; }
 
         // Navigation properties
         public UserAccount User { get; set; }
@@ -38,5 +39,7 @@ namespace Domain.Entity
     {
         NotSent = 0,
         Sent = 1,
+        Received = 3,
+        SentBack=2,
     }
 } 

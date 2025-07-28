@@ -19,11 +19,13 @@ namespace Application.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly IClaimService _claimService;
-        public TestOrderService(IUnitOfWork unitOfWork, IMapper mapper, IClaimService claimService)
+        private readonly IEmailService _emailService;
+        public TestOrderService(IUnitOfWork unitOfWork, IMapper mapper, IClaimService claimService, IEmailService emailService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _claimService = claimService;
+            _emailService = emailService;
         }
 
        
@@ -61,7 +63,8 @@ namespace Application.Services
                          .Include(x => x.User)
                          .Include(x => x.AppointmentStaff)
                          .Include(x => x.Samples)
-                             .ThenInclude(s => s.Result));
+                             .ThenInclude(s => s.LocusResults)
+                         .Include(s => s.Result));
 
                 if (order == null)
                 {
@@ -200,7 +203,7 @@ namespace Application.Services
             ApiResponse response = new ApiResponse();
             try
             {
-                var order = await _unitOfWork.TestOrders.GetAsync(x => x.Id == request.Id);
+                var order = await _unitOfWork.TestOrders.GetAsync(x => x.Id == request.Id, x => x.Include(o => o.User));
                 if (order == null)
                 {
                     return response.SetNotFound($"Test order with ID {request.Id} not found");
@@ -212,13 +215,41 @@ namespace Application.Services
                 if (request.DeliveryKitStatus == DeliveryKitStatus.Sent)
                 {
                     order.KitSendDate = DateTime.UtcNow;
+                    var email = order.User?.Email ?? order.Email;
+                    if (!string.IsNullOrEmpty(email))
+                    {
+                        string content = $"Kit test  cho {order.SampleMethod}đang được gửi đến địa chỉ {order.AppointmentLocation} " +
+                            $"Đây là video hướng dẫn sử dụng bộ Kit lấy mẫu ADN chuyên dụng  https://www.youtube.com/watch?v=XXMbYKxf5Ks&ab_channel=VIETGEN.";
+                        await _emailService.SendKitStatusEmail(email, content);
+                    }
                 }
 
-               
                 await _unitOfWork.SaveChangeAsync();
 
                 var result = _mapper.Map<TestOrderResponse>(order);
                 return response.SetOk("Update Success");
+            }
+            catch (Exception ex)
+            {
+                return response.SetBadRequest($"Error: {ex.Message}. Details: {ex.InnerException?.Message}");
+            }
+        }
+
+        public async Task<ApiResponse> GetByCurrentCustomerAsync()
+        {
+            ApiResponse response = new ApiResponse();
+            try
+            {
+                var claim = _claimService.GetUserClaim();
+                var orders = await _unitOfWork.TestOrders.GetAllAsync(x => x.UserId == claim.Id,
+                    q => q.Include(s => s.SampleMethod)
+                          .Include(s => s.Service)
+                          .Include(x => x.AppointmentStaff)
+                          .Include(x => x.Samples)
+                              .Include(s => s.Result));
+                orders = orders.OrderByDescending(o => o.CreatedDate).ToList();
+                var result = _mapper.Map<IEnumerable<TestOrderResponse>>(orders);
+                return response.SetOk(result);
             }
             catch (Exception ex)
             {

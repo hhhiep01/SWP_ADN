@@ -20,6 +20,8 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -106,9 +108,15 @@ builder.Services.AddScoped<ITestOrderService, TestOrderService>();
 builder.Services.AddScoped<IBlogService, BlogService>();
 builder.Services.AddScoped<ISampleService, SampleService>();
 builder.Services.AddScoped<IResultService, ResultService>();
+builder.Services.AddScoped<ICommentService, CommentService>();
+builder.Services.AddScoped<ILocusResultService, LocusResultService>();
 
 builder.Services.AddFluentValidationAutoValidation().AddValidatorsFromAssemblyContaining<RegisterValidator>();
-
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new DateTimeConverterWithVietnamTimeZone());
+    });
 
 // Add services to the container.
 builder.Services.AddEndpointsApiExplorer();
@@ -131,5 +139,46 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+public class DateTimeConverterWithVietnamTimeZone : JsonConverter<DateTime>
+{
+    private static readonly TimeZoneInfo VietnamTimeZone =
+        TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
+
+    public override DateTime Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    {
+        if (reader.TokenType == JsonTokenType.String)
+        {
+            var dateString = reader.GetString();
+            
+            string[] formats = new[]
+            {
+                "yyyy-MM-dd HH:mm:ss",
+                "yyyy-MM-dd'T'HH:mm:ss",
+                "yyyy-MM-dd'T'HH:mm:ssZ",
+                "yyyy-MM-dd'T'HH:mm:ss.fffZ",
+                "yyyy-MM-dd"
+            };
+            if (DateTime.TryParseExact(dateString, formats, System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.AssumeUniversal | System.Globalization.DateTimeStyles.AdjustToUniversal, out var dt))
+            {
+                return DateTime.SpecifyKind(dt, DateTimeKind.Utc);
+            }
+            // Fallback: thử parse tự động
+            if (DateTime.TryParse(dateString, out dt))
+            {
+                return DateTime.SpecifyKind(dt, DateTimeKind.Utc);
+            }
+            throw new JsonException($"Invalid date format: {dateString}");
+        }
+        // Nếu là kiểu date mặc định
+        return DateTime.SpecifyKind(reader.GetDateTime(), DateTimeKind.Utc);
+    }
+
+    public override void Write(Utf8JsonWriter writer, DateTime value, JsonSerializerOptions options)
+    {
+        var vietnamTime = TimeZoneInfo.ConvertTimeFromUtc(value.ToUniversalTime(), VietnamTimeZone);
+        writer.WriteStringValue(vietnamTime.ToString("yyyy-MM-dd HH:mm:ss"));
+    }
+}
 
 

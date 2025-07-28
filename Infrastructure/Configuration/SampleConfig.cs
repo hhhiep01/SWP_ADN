@@ -28,6 +28,11 @@ namespace Infrastructure.Configuration
                 .WithMany(x => x.Samples)
                 .HasForeignKey(x => x.CollectedBy)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasMany(x => x.LocusResults)
+               .WithOne(lr => lr.Sample)
+               .HasForeignKey(lr => lr.SampleId)
+               .OnDelete(DeleteBehavior.Cascade);
         }
     }
 } 

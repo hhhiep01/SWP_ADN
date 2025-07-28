@@ -63,11 +63,19 @@ namespace API.Controller
             return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
 
-        [Authorize(Roles = "Staff,Admin")]
+        [Authorize(Roles = "Staff,Admin,Customer")]
         [HttpPut("delivery-kit-status")]
         public async Task<IActionResult> UpdateDeliveryKitStatus([FromBody] UpdateDeliveryKitStatusRequest request)
         {
             var result = await _testOrderService.UpdateDeliveryKitStatusAsync(request);
+            return result.IsSuccess ? Ok(result) : BadRequest(result);
+        }
+
+        [Authorize]
+        [HttpGet("customer")]
+        public async Task<IActionResult> GetByCurrentCustomer()
+        {
+            var result = await _testOrderService.GetByCurrentCustomerAsync();
             return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
     }

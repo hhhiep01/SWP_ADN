@@ -19,6 +19,7 @@ using Application.Request;
 using Application.Response;
 
 
+
 namespace Application.MyMapper
 {
     public class MapperConfigurationsProfile : Profile
@@ -93,18 +94,41 @@ namespace Application.MyMapper
                         $"{src.Collector.FirstName} {src.Collector.LastName}" : null))
                 .ForMember(dest => dest.TestOrder,
                     opt => opt.MapFrom(src => src.TestOrder))
-                .ForMember(dest => dest.Result,
-                    opt => opt.MapFrom(src => src.Result));
+                .ForMember(dest => dest.ShippingProvider, opt => opt.MapFrom(src => src.ShippingProvider))
+                .ForMember(dest => dest.TrackingNumber, opt => opt.MapFrom(src => src.TrackingNumber))
+                .ForMember(dest => dest.LocusResults, opt => opt.MapFrom(src => src.LocusResults));
             /* .ForMember(dest => dest.SampleMethod,
                  opt => opt.MapFrom(src => src.TestOrder.SampleMethod));*/
+            CreateMap<CreateSamplesRequest, Sample>();
             CreateMap<SampleRequest, Sample>();
-            CreateMap<UpdateSampleRequest, Sample>();
+            CreateMap<UpdateSampleRequest, Sample>()
+                .ForMember(dest => dest.ShippingProvider, opt => opt.MapFrom(src => src.ShippingProvider))
+                .ForMember(dest => dest.TrackingNumber, opt => opt.MapFrom(src => src.TrackingNumber));
 
             CreateMap<Result, ResultResponse>()
-                .ForMember(dest => dest.ServiceName, opt => opt.MapFrom(src => src.Sample != null && src.Sample.TestOrder != null && src.Sample.TestOrder.Service != null ? src.Sample.TestOrder.Service.Name : null))
-                .ForMember(dest => dest.SampleMethodName, opt => opt.MapFrom(src => src.Sample != null && src.Sample.TestOrder != null && src.Sample.TestOrder.SampleMethod != null ? src.Sample.TestOrder.SampleMethod.Name : null));
+                .ForMember(dest => dest.ServiceName, opt => opt.MapFrom(src => src.TestOrder != null && src.TestOrder.Service != null ? src.TestOrder.Service.Name : null))
+                .ForMember(dest => dest.SampleMethodName, opt => opt.MapFrom(src => src.TestOrder != null && src.TestOrder.SampleMethod != null ? src.TestOrder.SampleMethod.Name : null));
 
             CreateMap<ResultRequest, Result>();
+
+            CreateMap<Comment, CommentResponse>()
+                .ForMember(dest => dest.AuthorName, opt => opt.MapFrom(src => src.UserAccount != null ? (src.UserAccount.FirstName + " " + src.UserAccount.LastName) : null));
+            CreateMap<CommentRequest, Comment>();
+            CreateMap<UpdateCommentRequest, Comment>();
+
+            // LocusResult mappings
+            CreateMap<LocusAlleleDto, LocusResult>();
+            CreateMap<LocusResultRequest, List<LocusResult>>()
+                .ConvertUsing((src, dest, ctx) =>
+                {
+                    var list = ctx.Mapper.Map<List<LocusResult>>(src.LocusAlleles);
+                    list.ForEach(r => r.SampleId = src.SampleId);
+                    return list;
+                });
+
+            CreateMap<LocusResult, LocusResultResponse>();
+            CreateMap<Sample, SampleWithResultResponse>();
+            CreateMap<TestOrder, TestOrderWithResultResponse>();
         }
     }
 }

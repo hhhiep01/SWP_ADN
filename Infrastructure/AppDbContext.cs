@@ -28,6 +28,8 @@ namespace Infrastructure
         public DbSet<Blog> Blogs { get; set; }
         public DbSet<Sample> Samples { get; set; }
         public DbSet<Result> Results { get; set; }
+        public DbSet<Comment> Comments { get; set; }
+        public DbSet<LocusResult> LocusResults { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -40,6 +42,8 @@ namespace Infrastructure
             modelBuilder.ApplyConfiguration(new BlogConfig());
             modelBuilder.ApplyConfiguration(new SampleConfig());
             modelBuilder.ApplyConfiguration(new ResultConfig());
+            modelBuilder.ApplyConfiguration(new CommentConfig());
+            modelBuilder.ApplyConfiguration(new LocusResultConfig());
         }
     }   
 }

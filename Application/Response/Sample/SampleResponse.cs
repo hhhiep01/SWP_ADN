@@ -2,6 +2,7 @@ using Application.Response.SampleMethod;
 using Application.Response.TestOrder;
 using Domain.Entity;
 using System;
+using System.Collections.Generic;
 
 namespace Application.Response.Sample
 {
@@ -16,6 +17,12 @@ namespace Application.Response.Sample
         public TestOrderShortResponse TestOrder { get; set; }
         public ResultResponse Result { get; set; }
         //public SampleMethodResponse SampleMethod { get; set; }
+        public string? ShippingProvider { get; set; }
+        public string? TrackingNumber { get; set; }
+        public string ParticipantName { get; set; }
+        public string Relationship { get; set; }
+        public string SampleCode { get; set; }
+        public List<Application.Response.LocusResultResponse> LocusResults { get; set; }
 
     }
 } 

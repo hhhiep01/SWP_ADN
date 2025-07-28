@@ -67,6 +67,48 @@ namespace Infrastructure.Migrations
                     b.ToTable("Blogs");
                 });
 
+            modelBuilder.Entity("Domain.Entity.Comment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("BlogId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid?>("ModifiedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<int>("UserAccountId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BlogId");
+
+                    b.HasIndex("UserAccountId");
+
+                    b.ToTable("Comments");
+                });
+
             modelBuilder.Entity("Domain.Entity.EmailVerification", b =>
                 {
                     b.Property<int>("Id")
@@ -93,6 +135,51 @@ namespace Infrastructure.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("EmailVerifications");
+                });
+
+            modelBuilder.Entity("Domain.Entity.LocusResult", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("FirstAllele")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("LocusName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid?>("ModifiedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<int>("SampleId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("SecondAllele")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SampleId");
+
+                    b.ToTable("LocusResults");
                 });
 
             modelBuilder.Entity("Domain.Entity.Result", b =>
@@ -129,12 +216,12 @@ namespace Infrastructure.Migrations
                     b.Property<DateTime?>("ResultDate")
                         .HasColumnType("timestamp without time zone");
 
-                    b.Property<int>("SampleId")
+                    b.Property<int>("TestOrderId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("SampleId")
+                    b.HasIndex("TestOrderId")
                         .IsUnique();
 
                     b.ToTable("Results");
@@ -208,14 +295,29 @@ namespace Infrastructure.Migrations
                     b.Property<string>("Notes")
                         .HasColumnType("text");
 
+                    b.Property<string>("ParticipantName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Relationship")
+                        .HasColumnType("text");
+
+                    b.Property<string>("SampleCode")
+                        .HasColumnType("text");
+
                     b.Property<int>("SampleMethodId")
                         .HasColumnType("integer");
 
                     b.Property<int>("SampleStatus")
                         .HasColumnType("integer");
 
+                    b.Property<string>("ShippingProvider")
+                        .HasColumnType("text");
+
                     b.Property<int>("TestOrderId")
                         .HasColumnType("integer");
+
+                    b.Property<string>("TrackingNumber")
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -493,6 +595,25 @@ namespace Infrastructure.Migrations
                     b.Navigation("UserAccount");
                 });
 
+            modelBuilder.Entity("Domain.Entity.Comment", b =>
+                {
+                    b.HasOne("Domain.Entity.Blog", "Blog")
+                        .WithMany("Comments")
+                        .HasForeignKey("BlogId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entity.UserAccount", "UserAccount")
+                        .WithMany("Comments")
+                        .HasForeignKey("UserAccountId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Blog");
+
+                    b.Navigation("UserAccount");
+                });
+
             modelBuilder.Entity("Domain.Entity.EmailVerification", b =>
                 {
                     b.HasOne("Domain.Entity.UserAccount", "User")
@@ -504,15 +625,26 @@ namespace Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Domain.Entity.Result", b =>
+            modelBuilder.Entity("Domain.Entity.LocusResult", b =>
                 {
                     b.HasOne("Domain.Entity.Sample", "Sample")
-                        .WithOne("Result")
-                        .HasForeignKey("Domain.Entity.Result", "SampleId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .WithMany("LocusResults")
+                        .HasForeignKey("SampleId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Sample");
+                });
+
+            modelBuilder.Entity("Domain.Entity.Result", b =>
+                {
+                    b.HasOne("Domain.Entity.TestOrder", "TestOrder")
+                        .WithOne("Result")
+                        .HasForeignKey("Domain.Entity.Result", "TestOrderId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("TestOrder");
                 });
 
             modelBuilder.Entity("Domain.Entity.Sample", b =>
@@ -605,6 +737,11 @@ namespace Infrastructure.Migrations
                     b.Navigation("Role");
                 });
 
+            modelBuilder.Entity("Domain.Entity.Blog", b =>
+                {
+                    b.Navigation("Comments");
+                });
+
             modelBuilder.Entity("Domain.Entity.Role", b =>
                 {
                     b.Navigation("UserAccounts");
@@ -612,8 +749,7 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entity.Sample", b =>
                 {
-                    b.Navigation("Result")
-                        .IsRequired();
+                    b.Navigation("LocusResults");
                 });
 
             modelBuilder.Entity("Domain.Entity.SampleMethod", b =>
@@ -634,6 +770,9 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entity.TestOrder", b =>
                 {
+                    b.Navigation("Result")
+                        .IsRequired();
+
                     b.Navigation("Samples");
                 });
 
@@ -642,6 +781,8 @@ namespace Infrastructure.Migrations
                     b.Navigation("AppointmentTestOrders");
 
                     b.Navigation("Blogs");
+
+                    b.Navigation("Comments");
 
                     b.Navigation("EmailVerifications");
 

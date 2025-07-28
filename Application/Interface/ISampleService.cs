@@ -8,7 +8,7 @@ namespace Application.Interface
     {
         Task<ApiResponse> GetAllAsync();
         Task<ApiResponse> GetByIdAsync(int id);
-        Task<ApiResponse> CreateAsync(SampleRequest request);
+        Task<ApiResponse> CreateAsync(CreateSamplesRequest requests);
         Task<ApiResponse> UpdateAsync(UpdateSampleRequest request);
         Task<ApiResponse> DeleteAsync(int id);
         Task<ApiResponse> GetByTestOrderIdAsync(int testOrderId);

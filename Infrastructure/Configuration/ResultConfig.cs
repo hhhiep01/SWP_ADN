@@ -10,9 +10,9 @@ namespace Infrastructure.Configuration
         {
             builder.HasKey(r => r.Id);
 
-            builder.HasOne(r => r.Sample)
-                .WithOne(s => s.Result)
-                .HasForeignKey<Result>(r => r.SampleId)
+            builder.HasOne(r => r.TestOrder)
+                .WithOne(t => t.Result)
+                .HasForeignKey<Result>(r => r.TestOrderId)
                 .OnDelete(DeleteBehavior.Restrict);
         }
     }
